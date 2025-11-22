@@ -13,7 +13,7 @@ import (
 // Router uses RouteSet to match path with handler
 type Router struct {
 	logger   *slog.Logger
-	config 	RoutegoConfig 
+	config   RoutegoConfig
 	routeSet routeSet.RouteSet
 }
 

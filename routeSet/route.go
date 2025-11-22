@@ -1,7 +1,6 @@
 package routeSet
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 )
@@ -41,7 +40,6 @@ func NewRoute(pattern string, handler http.HandlerFunc) route {
 		}
 		routeParts = append(routeParts, routePart)
 	}
-	fmt.Println("route parts: ", routeParts)
 	return route{
 		parts:   routeParts,
 		handler: handler,
