@@ -1,4 +1,4 @@
-package routeSet
+package route
 
 import (
 	"net/http"
@@ -7,16 +7,16 @@ import (
 
 // route stores sample of url route
 // and matches it with a handler
-type route struct {
+type Route struct {
 	parts   []routePart
-	handler http.HandlerFunc
+	Handler http.HandlerFunc
 }
 
 // NewRoute(pattern, handler) creates a new route with a pattern
 // pattern can contain one of parameters: {num}, {string}
 // pattern can contain strict parts: /tasks/, /api/users/
 // examples: 'api/users/3', 'post/{string}'
-func NewRoute(pattern string, handler http.HandlerFunc) route {
+func NewRoute(pattern string, handler http.HandlerFunc) Route {
 	patternParts := strings.FieldsFunc(pattern, func(r rune) bool {
 		return r == '/'
 	})
@@ -40,14 +40,14 @@ func NewRoute(pattern string, handler http.HandlerFunc) route {
 		}
 		routeParts = append(routeParts, routePart)
 	}
-	return route{
+	return Route{
 		parts:   routeParts,
-		handler: handler,
+		Handler: handler,
 	}
 }
 
 // Match(path) checks if given path matches pattern of the route
-func (r *route) Match(path string) (bool, any) {
+func (r *Route) Match(path string) (bool, any) {
 	pathParts := strings.FieldsFunc(path, func(r rune) bool {
 		return r == '/'
 	})

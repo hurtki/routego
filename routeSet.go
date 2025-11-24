@@ -1,17 +1,18 @@
-package routeSet
+package routego
 
 import (
 	"net/http"
+	"github.com/hurtki/routego/route"
 )
 
 // RouteSet is for storing path to handler map
 type RouteSet struct {
-	routes []route
+	routes []route.Route
 }
 
 func NewRouteSet() RouteSet {
 
-	return RouteSet{routes: []route{}}
+	return RouteSet{routes: []route.Route{}}
 }
 
 // Add(pattern, handler) creates a new route in routeSet with a pattern
@@ -19,7 +20,7 @@ func NewRouteSet() RouteSet {
 // pattern can contain strict parts: /tasks/, /api/users/
 // examples: 'api/users/3', 'post/{string}'
 func (s *RouteSet) Add(path string, handler http.HandlerFunc) {
-	route := NewRoute(path, handler)
+	route := route.NewRoute(path, handler)
 	s.routes = append(s.routes, route)
 }
 
@@ -30,9 +31,9 @@ func (s *RouteSet) Handler(path string) (http.Handler, any, error) {
 
 		matches, parameter := route.Match(path)
 		if matches {
-			return route.handler, parameter, nil
+			return route.Handler, parameter, nil
 		}
 	}
 
-	return nil, nil, ErrNotFound
+	return nil, nil, route.ErrNotFound
 }
