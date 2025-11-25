@@ -40,8 +40,3 @@ func (r *Router) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 
 	handler.ServeHTTP(res, req)
 }
-
-// StartRouting starts listening in AppConfig's port and routing them to specified in routeSet handlers
-func (r *Router) StartRouting() error {
-	return http.ListenAndServe(r.config.Port, r)
-}
