@@ -10,14 +10,12 @@ import (
 // Router is a structure to handle requests and routing them to handlers
 // Router uses RouteSet to match path with handler
 type Router struct {
-	config   RoutegoConfig
 	routeSet RouteSet
 }
 
-func NewRouter(cgf RoutegoConfig, routeSet RouteSet) Router {
+func NewRouter(routeSet RouteSet) Router {
 
 	router := Router{
-		config:   cgf,
 		routeSet: routeSet,
 	}
 
