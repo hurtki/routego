@@ -4,31 +4,48 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/hurtki/routego/route"
+	"github.com/hurtki/routego/internal/route"
+	"github.com/hurtki/routego/internal/route_set"
 )
 
 // Router is a structure to handle requests and routing them to handlers
 // Router uses RouteSet to match path with handler
 type Router struct {
-	routeSet RouteSet
+	routeSet route_set.RouteSet
+	cfg      RouterConfig
 }
 
-func NewRouter(routeSet RouteSet) Router {
+type RouterConfig struct {
+	NotFoundHandler http.Handler
+}
 
-	router := Router{
-		routeSet: routeSet,
+func defaultConfig(base RouterConfig) RouterConfig {
+	cfg := RouterConfig{}
+	if base.NotFoundHandler == nil {
+		cfg.NotFoundHandler = http.NotFoundHandler()
+	} else {
+		cfg.NotFoundHandler = base.NotFoundHandler
 	}
 
-	return router
+	return cfg
+}
+
+func NewRouter(cfg *RouterConfig) Router {
+	if cfg == nil {
+		cfg = &RouterConfig{}
+	}
+
+	return Router{
+		routeSet: route_set.NewRouteSet(),
+		cfg:      defaultConfig(*cfg),
+	}
 }
 
 func (r *Router) ServeHTTP(res http.ResponseWriter, req *http.Request) {
-	handler, parameter, err := r.routeSet.Handler(req.URL.Path)
-	if err == route.ErrNotFound {
-		http.NotFound(res, req)
+	handler, parameter, found := r.routeSet.Handler(req.URL.Path, route.HttpMethod(req.Method))
+	if !found {
+		r.cfg.NotFoundHandler.ServeHTTP(res, req)
 		return
-	} else if err != nil {
-		http.NotFound(res, req)
 	}
 
 	if parameter != nil {

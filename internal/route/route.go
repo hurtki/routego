@@ -9,14 +9,27 @@ import (
 // and matches it with a handler
 type Route struct {
 	parts   []routePart
+	method  HttpMethod
 	Handler http.HandlerFunc
 }
+
+type HttpMethod string
+
+const (
+	GET     HttpMethod = "GET"
+	POST    HttpMethod = "POST"
+	PATCH   HttpMethod = "PATCH"
+	PUT     HttpMethod = "PUT"
+	DELETE  HttpMethod = "DELETE"
+	OPTIONS HttpMethod = "OPTIONS"
+	HEAD    HttpMethod = "HEAD"
+)
 
 // NewRoute(pattern, handler) creates a new route with a pattern
 // pattern can contain one of parameters: {num}, {string}
 // pattern can contain strict parts: /tasks/, /api/users/
 // examples: 'api/users/3', 'post/{string}'
-func NewRoute(pattern string, handler http.HandlerFunc) Route {
+func NewRoute(pattern string, handler http.HandlerFunc, method HttpMethod) Route {
 	patternParts := strings.FieldsFunc(pattern, func(r rune) bool {
 		return r == '/'
 	})
@@ -43,11 +56,15 @@ func NewRoute(pattern string, handler http.HandlerFunc) Route {
 	return Route{
 		parts:   routeParts,
 		Handler: handler,
+		method:  method,
 	}
 }
 
 // Match(path) checks if given path matches pattern of the route
-func (r *Route) Match(path string) (bool, any) {
+func (r *Route) Match(path string, httpMethod HttpMethod) (bool, any) {
+	if r.method != httpMethod {
+		return false, nil
+	}
 	pathParts := strings.FieldsFunc(path, func(r rune) bool {
 		return r == '/'
 	})
