@@ -1,6 +1,7 @@
 package route_set
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/hurtki/routego/internal/route"
@@ -27,6 +28,7 @@ func (s *RouteSet) Add(path string, handler http.HandlerFunc, httpMethod route.H
 // Handler(path string) tries to match given path specified with Add() routes
 // returns a handler, url parameter(if there is no then nil), bool (true, if found)
 func (s *RouteSet) Handler(path string, httpMethod route.HttpMethod) (http.Handler, any, bool) {
+	fmt.Println("test 1")
 	for _, route := range s.routes {
 
 		matches, parameter := route.Match(path, httpMethod)

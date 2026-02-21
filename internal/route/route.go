@@ -1,7 +1,9 @@
 package route
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -63,6 +65,7 @@ func NewRoute(pattern string, handler http.HandlerFunc, method HttpMethod) Route
 // Match(path) checks if given path matches pattern of the route
 func (r *Route) Match(path string, httpMethod HttpMethod) (bool, any) {
 	if r.method != httpMethod {
+		fmt.Printf("bad httpMethod, expected: %s, real: %s\n", r.method, httpMethod)
 		return false, nil
 	}
 	pathParts := strings.FieldsFunc(path, func(r rune) bool {
@@ -72,6 +75,7 @@ func (r *Route) Match(path string, httpMethod HttpMethod) (bool, any) {
 	var resParameter any = nil
 
 	if len(pathParts) != len(r.parts) {
+		fmt.Println("wrong length")
 		return false, nil
 	}
 
@@ -83,6 +87,7 @@ func (r *Route) Match(path string, httpMethod HttpMethod) (bool, any) {
 
 		ok, parameter := routePart.Compare(pathPart)
 		if !ok {
+			fmt.Printf("bad routepart, index %s\n", strconv.Itoa(i))
 			return false, nil
 		}
 

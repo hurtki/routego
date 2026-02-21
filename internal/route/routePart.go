@@ -1,6 +1,7 @@
 package route
 
 import (
+	"fmt"
 	"regexp"
 	"strconv"
 )
@@ -63,18 +64,21 @@ func NewRoutePart(part string) (routePart, error) {
 func (p *routePart) Compare(part string) (bool, any) {
 
 	if p.Strict {
+		fmt.Printf("check strict partL %s == %s\n", part, p.strictPart)
 		return part == p.strictPart, nil
 
 	} else if p.parameterType == NumberParameter {
+		fmt.Println("parameter type == Number")
 		num, err := strconv.Atoi(part)
 		if err != nil {
+			fmt.Printf("can't converrt to number %s\n", err.Error())
 			return false, nil
 		}
 
 		return true, num
 	} else if p.parameterType == StringParameter {
+		fmt.Println("parameter type string")
 		return true, part
-
 	} else {
 		panic("unreal route part")
 	}
