@@ -1,4 +1,4 @@
-package routego
+package main
 
 import (
 	"net/http"

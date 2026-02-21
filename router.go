@@ -1,8 +1,10 @@
-package routego
+package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/hurtki/routego/internal/route"
 	"github.com/hurtki/routego/internal/route_set"
@@ -54,4 +56,18 @@ func (r *Router) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	}
 
 	handler.ServeHTTP(res, req)
+}
+
+func test(tes http.ResponseWriter, req *http.Request) {
+	fmt.Println("got to handler")
+	fmt.Println(req.Context().Value("urlParameter"))
+}
+
+func main() {
+	router := NewRouter(nil)
+	router.GetFunc("/tasks/{num}", test)
+	router.PutFunc("/tasks/{num}", test)
+	router.DeleteFunc("/tasks/{num}", test)
+	http.ListenAndServe(":80", &router)
+	time.Sleep(time.Hour)
 }
